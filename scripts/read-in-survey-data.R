@@ -51,6 +51,7 @@ smart_survey <- left_join(
   x = hh, 
   y = child, 
   by = "index"
-)
+) |> 
+  select(-index)
 
 ################################ End of workflow ###############################
