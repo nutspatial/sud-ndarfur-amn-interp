@@ -22,16 +22,41 @@
 w <- smart_wfhz |> 
   summarise(
     cases = sum(gam, na.rm = TRUE), 
-    pop = n(), 
+    pop = n(),
+    rate = cases / pop, 
     geometry = st_centroid(st_union(geometry)),
     .by = cluster
   )
+
+### --------------------------------------------------------- Plot the data ----
+ggplot(data = al_fasher) +
+  geom_sf(fill = "white") +
+  geom_sf(
+    data = w, 
+    aes(color = rate)
+  ) +
+  scale_color_viridis_c(option = "viridis", direction = -1) +
+  theme_void()
+
 
 ## ---- Summarise XY geocoordinates and cases at cluster level -----------------
 m <- smart_muac |> 
   summarise(
     cases = sum(gam, na.rm = TRUE), 
     pop = n(), 
+    rate = cases / pop,
     geometry = st_centroid(st_union(geometry)),
     .by = cluster
   )
+
+### --------------------------------------------------------- Plot the data ----
+ggplot(data = al_fasher) +
+  geom_sf(fill = "white") +
+  geom_sf(
+    data = m, 
+    aes(color = rate)
+  ) +
+  scale_color_viridis_c(option = "viridis", direction = -1) +
+  theme_void()
+
+################################ End of workflow ###############################
