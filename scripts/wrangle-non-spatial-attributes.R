@@ -42,8 +42,8 @@ smart_wfhz <- smart_survey |>
     coords = c("latitude", "longitude"),
     dim = "XY"
   ) |> 
-  st_set_crs(value = 4326) |> 
-  st_transform(crs = 29636)
+  st_set_crs(value = "EPSG:4326") |> 
+  st_transform(crs = "EPSG:32635")
 
 ## ---- Wrangle MUAC data ------------------------------------------------------
 smart_muac <- smart_survey |> 
@@ -82,7 +82,6 @@ smart_muac <- smart_survey |>
     coords = c("latitude", "longitude"),
     dim = "XY"
   ) |> 
-  st_set_crs(value = 4326) |> 
-  st_transform(crs = 29636)
-
+  st_set_crs(value = "EPSG:4326") |> 
+  st_transform(crs = st_crs(al_fasher))
 ################################ End of workflow ###############################
