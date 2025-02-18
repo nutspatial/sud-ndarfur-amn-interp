@@ -38,6 +38,18 @@ ggplot(data = al_fasher) +
   scale_color_viridis_c(option = "viridis", direction = -1) +
   theme_void()
 
+#### Plot the county where data was collected ----
+al_fasher |> 
+  filter(NAME_3 == "El Fashir") |> 
+ggplot() +
+  geom_sf(fill = "white") +
+  geom_sf(
+    data = w, 
+    aes(color = rate)
+  ) +
+  scale_color_viridis_c(option = "viridis", direction = -1) +
+  theme_void()
+
 
 ## ---- Summarise XY geocoordinates and cases at cluster level -----------------
 m <- smart_muac |> 
@@ -51,6 +63,18 @@ m <- smart_muac |>
 
 ### --------------------------------------------------------- Plot the data ----
 ggplot(data = al_fasher) +
+  geom_sf(fill = "white") +
+  geom_sf(
+    data = m, 
+    aes(color = rate)
+  ) +
+  scale_color_viridis_c(option = "viridis", direction = -1) +
+  theme_void()
+
+#### Plot the county where data was collected ----
+al_fasher |> 
+  filter(NAME_3 == "El Fashir") |> 
+ggplot() +
   geom_sf(fill = "white") +
   geom_sf(
     data = m, 
