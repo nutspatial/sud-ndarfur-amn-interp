@@ -1,5 +1,5 @@
 ################################################################################
-#                          READ IN DATASET, SHAPEFILE                          #
+#                                 READ IN DATASET                              #
 ################################################################################
 
 
@@ -24,7 +24,7 @@ hh <- read_xlsx(
   separate_wider_delim(
     cols = gps,
     delim = " ", 
-    names = c("latitude", "longitude", "altitude", "accuracy")
+    names = c("longitude", "latitude", "altitude", "accuracy")
   ) |> 
   select(-altitude) |> 
   relocate(index, .after = accuracy)

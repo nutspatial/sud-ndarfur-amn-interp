@@ -9,10 +9,7 @@ sudan_adm2 <- st_read(
 
 ## ---- Set CRS to UTM and filter out Al Fasher locality -----------------------
 al_fasher <- sudan_adm2 |> 
-  st_transform(crs = 29636) |> 
-  filter(ADM2_EN == "Al Fasher")
+  filter(ADM2_EN == "Al Fasher") |> 
+  st_transform(crs = "EPSG:32635")
 
 ################################ End of workflow ###############################
-
-
-
