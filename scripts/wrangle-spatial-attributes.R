@@ -44,6 +44,16 @@ sp_wts_wfhz <- aggr_wfhz |>
   ) |>
   knn2nb(row.names = NULL)
 
+### ------------------------------------------------------- Calculate rates ----
+sebsr_wfhz <- EBlocal(
+  ri = aggr_wfhz$cases,
+  ni = aggr_wfhz$pop,
+  nb = sp_wts_wfhz
+)
+
+#### Bind data.frames -----
+wrangled_wfhz <- cbind(aggr_wfhz, sebsr_wfhz)
+
 ## ---
 ggplot(data = sudan_adm3) +
   geom_sf(
