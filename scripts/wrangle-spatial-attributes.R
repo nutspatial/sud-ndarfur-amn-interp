@@ -83,10 +83,6 @@ sebsr_wfhz <- EBlocal(
 #### Bind data.frames -----
 wrangled_wfhz <- cbind(aggr_wfhz, sebsr_wfhz)
 
-## ---- Split localities to address the issue of missing XY coordinates in some 
-al_fasher_tawila <- wrangled_wfhz |> 
-  filter(local)
-
 ## ---- Map rates --------------------------------------------------------------
 ### ----------------- Create a categorical variable with custom breakpoints ----
 wrangled_wfhz <- wrangled_wfhz |>
@@ -108,15 +104,36 @@ wrangled_wfhz <- wrangled_wfhz |>
     )
   )
 
-#### ------------------------------------------------------- Plot raw rates ----
-ggplot(data = sudan_adm3) +
+## ---- Split localities to address the issue of missing XY coordinates in some 
+
+### ----------------------- Al Fasher and Tawila localities sampling points ----
+elf_taw_data <- wrangled_wfhz |> 
+  filter(locality %in% c("El Fasher", "Tawila"))
+
+### ---------------------------- Al Fasher and Tawila localities shapefiles ----
+elf_taw_shp <- sudan_adm3 |> 
+  filter(NAME_3 %in% c("El Fashir", "Tawilah"))
+
+### ------------------------------------ El Lait and El Taweisha localities ----
+ellait_eltaw_data <- wrangled_wfhz |> 
+  filter(locality %in% c("El Lait", "El Taweisha"))
+
+### ---------------------------- Al Fasher and Tawila localities shapefiles ----
+ellait_eltaw_shp <- sudan_adm3 |> 
+  filter(NAME_3 == c("El Le Aeit En Nabi"))
+
+## ---- Plot maps --------------------------------------------------------------
+
+### ----------------------------------------------- El Lait and El Taweisha ----
+#### Map of raw rates ----
+ggplot(data = ellait_eltaw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = wrangled_wfhz,
+    data = ellait_eltaw_data,
     aes(color = raw_cat)
   ) +
   scale_color_manual(
@@ -124,15 +141,14 @@ ggplot(data = sudan_adm3) +
     name = "Raw rates"
   ) +
     geom_sf_text(
-      data = sudan_adm3,
+      data = ellait_eltaw_shp,
       mapping = aes(label = factor(NAME_3)),
-      show.legend = TRUE,
       colour = "#34495E",
       size = 1.8
     ) +
   theme_void() +
   labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across in North Darfur",
+    title = "Spatial distribution GAM by WFHZ rates by sampling points across El Lait and El Tawish",
     subtitle = "Raw rates: cases / total number of children surveyed"
   ) +
   theme(
@@ -140,15 +156,15 @@ ggplot(data = sudan_adm3) +
     plot.subtitle = element_text(size = 9, colour = "#706E6D")
   )
 
-### ------------------------------------------------------------ Plot SEBSR ----
-ggplot(data = sudan_adm3) +
+#### Map of SEBSR ----
+ggplot(data = ellait_eltaw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = wrangled_wfhz,
+    data = ellait_eltaw_data,
     aes(color = sebsr_cat)
   ) +
   scale_color_manual(
@@ -156,14 +172,14 @@ ggplot(data = sudan_adm3) +
     name = "Smoothed rates"
   ) +
     geom_sf_text(
-      data = sudan_adm3,
+      data = ellait_eltaw_shp,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
     ) +
   theme_void() +
   labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across in North Darfur",
+    title = "Spatial distribution GAM by WFHZ rates by sampling points across across El Lait and El Tawish",
     subtitle = "Rates smoothed using Spatial Empirical Bayesian"
   ) +
   theme(
@@ -171,4 +187,66 @@ ggplot(data = sudan_adm3) +
     plot.subtitle = element_text(size = 9, colour = "#706E6D")
   )
 
+### -------------------------------------------------- El Fasher and Tawila ----
+#### Map of raw rates ----
+ggplot(data = elf_taw_shp) +
+  geom_sf(
+    fill = "white",
+    color = "#3F4342",
+    size = 0.8
+  ) +
+  geom_sf(
+    data = elf_taw_data,
+    aes(color = raw_cat)
+  ) +
+  scale_color_manual(
+    values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
+    name = "Raw rates"
+  ) +
+    geom_sf_text(
+      data = elf_taw_shp,
+      mapping = aes(label = factor(NAME_3)),
+      colour = "#34495E",
+      size = 1.8
+    ) +
+  theme_void() +
+  labs(
+    title = "Spatial distribution GAM by WFHZ rates by sampling points across El Fashir and Tawila",
+    subtitle = "Raw rates: cases / total number of children surveyed"
+  ) +
+  theme(
+    plot.title = element_text(size = 11),
+    plot.subtitle = element_text(size = 9, colour = "#706E6D")
+  )
+
+#### Map of SEBSR ----
+ggplot(data = elf_taw_shp) +
+  geom_sf(
+    fill = "white",
+    color = "#3F4342",
+    size = 0.8
+  ) +
+  geom_sf(
+    data = elf_taw_data,
+    aes(color = sebsr_cat)
+  ) +
+  scale_color_manual(
+    values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
+    name = "Smoothed rates"
+  ) +
+    geom_sf_text(
+      data = elf_taw_shp,
+      mapping = aes(label = factor(NAME_3)),
+      colour = "#34495E",
+      size = 1.8
+    ) +
+  theme_void() +
+  labs(
+    title = "Spatial distribution GAM by WFHZ rates by sampling points across across El Fashir and Tawila",
+    subtitle = "Rates smoothed using Spatial Empirical Bayesian"
+  ) +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 9, colour = "#706E6D")
+  )
 ################################ End of workflow ###############################
