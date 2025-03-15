@@ -7,7 +7,7 @@
 ### ------------------- Create a regular grid of area to be interpolated on ----
 elf_taw_grid <- elf_taw_shp |> 
   st_bbox() |> 
-  st_as_stars(dx = 1500) |> 
+  st_as_stars(dx = 1200) |> 
   st_crop(elf_taw_shp)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
@@ -52,7 +52,6 @@ elf_taw_cv_wfhz <- autoKrige.cv(
   miscFitOptions = list(),
   nmin = 3,
   nmax = 4, 
-  maxdist = 9000, 
   verbose = c(FALSE, TRUE)
 )
 
@@ -95,3 +94,31 @@ theme(
   plot.title = element_text(size = 11),
   plot.subtitle = element_text(size = 9, colour = "#706E6D")
 )
+
+### ----------------------- Visualize interpolated results on a map surface ----
+ggplot() +
+  geom_stars(
+    data = elf_taw_krige_wfhz[[1]],
+    aes(fill = var1.pred, x = x, y = y)
+  ) +
+  scale_fill_gradientn(
+    colors = apply_ipc_colours(),
+    na.value = "transparent",
+    name = "GAM Prevalence (%)",
+    limits = c(0, 30),
+    breaks = c(0, 5, 10, 15, 30),
+    labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
+    values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
+  ) +
+  geom_sf(
+    data = st_cast(elf_taw_shp, "MULTILINESTRING"),
+    linewidth = 0.2,
+    color = "grey"
+  ) +
+  labs(
+    title = "A surface map of the predicted prevalence of GAM by WHZ"
+  ) +
+  theme(
+    plot.title = element_text(colour = "#706E6D", size = 10)
+  ) +
+  theme_void()
