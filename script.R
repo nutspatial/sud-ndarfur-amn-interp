@@ -5,7 +5,8 @@ library(dplyr)
 library(lubridate)
 library(mwana)
 library(sf)
-library(tmap)
+library(ggplot2)
+library(spdep)
 
 ## ---- Read in input data and set Coordinate Reference System -----------------
 source("scripts/read-in-survey-data.R")

@@ -47,7 +47,7 @@ child <- read_xlsx(
   )
 
 ### ------------------------------ Join household roster with child dataset ----
-smart_survey <- left_join(
+al_fasher <- left_join(
   x = hh, 
   y = child, 
   by = "index"
@@ -55,3 +55,5 @@ smart_survey <- left_join(
   select(-index)
 
 ################################ End of workflow ###############################
+
+x <- bind_rows(al_fasher, al_lait, at_tawila, at_tawisha, um_kadadah)
