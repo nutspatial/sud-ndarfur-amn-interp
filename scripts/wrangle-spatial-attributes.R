@@ -1,23 +1,8 @@
 ################################################################################
 #            WORKFLOW TO WRANGLE DATA THROUGH SPATIAL ATTRIBUTES               #
-#
-# A SMART survey is a cluster-based survey. Observations are measured at household
-# level; this includes the geocoordinates that are collected at this level as well.
-# The Al Fasher SMART survey sampled 503 households. This means that there are 
-# 503 geocoordinates XY, one for each household. If a household has 5 children, 
-# the geocoordinate is repeated on 5 different rows binded to the same household 
-# ID.
-# 
-# In order to feed this input data to the interpolation model, the model requires
-# that the data be aggregated at a cluster level. This includes both the point 
-# estimates of acute malnutrition and the geocoordinates. The workflow below does
-# that. It summarizes 503 household-level geocoordinates into 37 cluster-level  
-# geocoordinates by calculating the mean centroid (average latitude and longitude)
-# for each cluste. 
-
 ################################################################################
 
-## ---- Summarise XY geocoordinates and cases at cluster level -----------------
+## ---- Set WFHZ data as an `sf` object  ---------------------------------------
 wfhz <- smart_wfhz |> 
 filter(!flag_wfhz == 1) |> 
   select(locality, cluster, latitude, longitude, gam) |> 
@@ -49,6 +34,15 @@ aggr_wfhz <- wfhz |>
     crs = "EPSG:4326"
   ) |>
   st_transform(crs = "EPSG:20135")
+
+### -------------------------- Calculate spatial weights: K-Near Neighbours ----
+sp_wts_wfhz <- aggr_wfhz |>
+  knearneigh(
+    k = 4,
+    longlat = TRUE,
+    use_kd_tree = TRUE
+  ) |>
+  knn2nb(row.names = NULL)
 
 ## ---
 ggplot(data = sudan_adm3) +
