@@ -122,3 +122,83 @@ ggplot() +
     plot.title = element_text(colour = "#706E6D", size = 10)
   ) +
   theme_void()
+
+### ------------------------------------------------------- Get areal means ----
+elf_taw_areal_mean_wfhz <- gstat::krige(
+  formula = est ~ 1,
+  locations = elf_taw_data_wfhz,
+  nmin = 3,
+  nmax = 4,
+  model = elf_taw_variogram_wfhz[[2]],
+  newdata = elf_taw_shp_wfhz
+)
+
+#### Cloropleth map of the mean predicted prevalence at locality level ----
+ggplot() +
+  geom_sf(
+    data = elf_taw_areal_mean_wfhz,
+    aes(fill = var1.pred),
+    color = "black",
+    size = 0.2
+  ) +
+  scale_fill_gradientn(
+    colours = apply_ipc_colours(),
+    na.value = "transparent",
+    name = "GAM Prevalence (%)",
+    limits = c(0, 30),
+    breaks = c(0, 5, 10, 15, 30),
+    labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
+    values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
+  ) +
+  geom_sf(
+    data = elf_taw_shp_wfhz,
+    fill = NA,
+    color = "#F2F3F4",
+    size = 0.8
+  ) +
+  geom_sf_text(
+    data = elf_taw_shp_wfhz,
+    mapping = aes(label = factor(NAME_3)),
+    show.legend = TRUE,
+    color = "#34495E",
+    size = 3,
+  ) +
+  labs(
+    title = "Mean predicted prevalence of GAM by WFHZ at locality level",
+    fill = "Predicted Values"
+  ) +
+  theme(
+    plot.title = element_text(size = 9)
+  ) +
+  theme_void()
+
+#### Get minimum and maximum predicted prevalence values by locality -----
+elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>
+  st_as_sf() |>
+  st_join(elf_taw_shp_wfhz, left = FALSE) |> # each grid cell to a polygon
+  group_by(NAME_3) |>
+  summarise(
+    min_value = min(var1.pred, na.rm = TRUE),
+    max_value = max(var1.pred, na.rm = TRUE)
+  )
+
+#### Compare mean predicted prevalence against original survey results -----
+elf_taw_pred_vs_original_wfhz <- smart_wfhz |> 
+  filter(locality %in% c("El Fasher", "Tawila")) |> 
+  mw_estimate_prevalence_wfhz(
+    wt = NULL,
+    edema = edema,
+    .by = locality
+  ) |>
+  select(locality, gam_p) |>
+  arrange(factor(locality)) |>
+  mutate(
+    survey = gam_p * 100,
+    interp = elf_taw_areal_mean_wfhz[["var1.pred"]],
+    bias = interp - survey,
+    min_interp = elf_taw_interp_min_max_wfhz[[2]],
+    max_interp = elf_taw_interp_min_max_wfhz[[3]]
+  ) |>
+  select(-gam_p)
+
+############################## End of Workflow #################################
