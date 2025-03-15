@@ -1,24 +1,28 @@
 ## ---- Load required libraries ------------------------------------------------
-library(readxl)
 library(tidyr)
 library(dplyr)
 library(lubridate)
 library(mwana)
 library(sf)
+library(automap)
+library(stars)
 library(ggplot2)
 library(spdep)
 
-## ---- Read in input data and set Coordinate Reference System -----------------
-source("scripts/read-in-survey-data.R")
+## ---- Load utility functions -------------------------------------------------
+source("R/utils.R")
 
-## ---- Read in Sudan shapefile, project and filter out Al Fasher --------------
-source("scripts/shapefiles.R")
+## ---- Read in Sudan shapefile ------------------------------------------------
+source("scripts/read-in-shapefiles.R")
 
-## ---- Wrangle non-spatial data -----------------------------------------------
-source("scripts/wrangle-non-spatial-attributes.R")
+## ---- Wrangle aspatial data --------------------------------------------------
+source("scripts/wrangle-aspatial-attributes.R")
 
-## ---- Wrangle spatial data -----------------------------------------------
+## ---- Run data plausibility checks -------------------------------------------
+source("scripts/data-quality-check.R")
+
+## ---- Wrangle spatial data ---------------------------------------------------
 source("scripts/wrangle-spatial-attributes.R")
 
 ## ---- Run spatial interpolation ----------------------------------------------
-source("scripts/interpolate.R")
+source("scripts/krige-interpolate-wfhz-automap.R")
