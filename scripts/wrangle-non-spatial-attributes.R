@@ -3,13 +3,13 @@
 ################################################################################
 
 ## ---- Exclude rows with missing values ---------------------------------------
-smart_survey <- filter(
-  .data = smart_survey, 
-  !is.na(weight)
+data <- filter(
+  .data = data, 
+  !is.na(longitude)
 )
 
 ## ---- Wrangle weight-for-height data -----------------------------------------
-smart_wfhz <- smart_survey |> 
+smart_wfhz <- data |> 
   mutate(
     age = NA_real_,
     end = date(end),
@@ -34,19 +34,11 @@ smart_wfhz <- smart_survey |>
     zscores = wfhz,
     edema = edema,
     .by = "zscores"
-  ) |> 
-  filter(!flag_wfhz == 1) |> 
-  select(cluster, latitude, longitude, gam) |> 
-  filter(!is.na(latitude)) |> 
-  st_as_sf(
-    coords = c("latitude", "longitude"),
-    dim = "XY"
-  ) |> 
-  st_set_crs(value = "EPSG:4326") |> 
-  st_transform(crs = "EPSG:32635")
+  )
+
 
 ## ---- Wrangle MUAC data ------------------------------------------------------
-smart_muac <- smart_survey |> 
+smart_muac <- data |> 
   mutate(
     age = NA_real_,
     end = date(end),
@@ -76,12 +68,12 @@ smart_muac <- smart_survey |>
     .by = "muac"
   ) |> 
   filter(!flag_mfaz == 1) |> 
-  select(cluster, latitude, longitude, gam) |> 
+  select(locality, cluster, latitude, longitude, gam) |> 
   filter(!is.na(latitude)) |> 
   st_as_sf(
     coords = c("latitude", "longitude"),
     dim = "XY"
   ) |> 
   st_set_crs(value = "EPSG:4326") |> 
-  st_transform(crs = st_crs(al_fasher))
+  st_transform(crs = "EPSG:20135")
 ################################ End of workflow ###############################

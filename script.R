@@ -6,6 +6,7 @@ library(lubridate)
 library(mwana)
 library(sf)
 library(ggplot2)
+library(spdep)
 
 ## ---- Read in input data and set Coordinate Reference System -----------------
 source("scripts/read-in-survey-data.R")
