@@ -56,7 +56,7 @@ ggplot(data = sudan_adm3) +
   ) +
   theme_void() +
   labs(
-    title = "Spatial distribution of the surveyed sampling points",
+    title = "Spatial distribution of the surveyed sampling points across North Darfur",
     subtitle = "Um Kaddada and El Lait, 97.5% and 46% of rows had missing XY coordinates, respectively"
   ) +
   theme(
