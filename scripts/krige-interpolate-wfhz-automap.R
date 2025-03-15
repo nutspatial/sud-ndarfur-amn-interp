@@ -26,3 +26,17 @@ elf_taw_variogram <- autofitVariogram(
   cutoff = elf_taw_dist_max,
   width = elf_taw_dist_min
 )
+
+### ----------------------------------------------------------- Interpolate ----
+elf_taw_krige <- autoKrige(
+  formula = est ~ 1, 
+  input_data = elf_taw_data_wfhz,
+  new_data = elf_taw_grid,
+  model = "Ste",
+  fix.values = c(NA, NA, NA),
+  GLS.model = NA,
+  start_vals = c(NA, NA, NA),
+  miscFitOptions = list(),
+  nmin = 3,
+  nmax = 4
+)
