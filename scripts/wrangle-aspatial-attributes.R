@@ -66,14 +66,5 @@ smart_muac <- data |>
     muac = muac,
     edema = edema, 
     .by = "muac"
-  ) |> 
-  filter(!flag_mfaz == 1) |> 
-  select(locality, cluster, latitude, longitude, gam) |> 
-  filter(!is.na(latitude)) |> 
-  st_as_sf(
-    coords = c("latitude", "longitude"),
-    dim = "XY"
-  ) |> 
-  st_set_crs(value = "EPSG:4326") |> 
-  st_transform(crs = "EPSG:20135")
+  )
 ################################ End of workflow ###############################

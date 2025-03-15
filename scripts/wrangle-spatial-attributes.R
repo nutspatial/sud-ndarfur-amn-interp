@@ -68,15 +68,15 @@ ggplot(data = sudan_adm3) +
 sp_wts_wfhz <- aggr_wfhz |>
   knearneigh(
     k = 4,
-    longlat = TRUE,
-    use_kd_tree = TRUE
+    longlat = NULL,
+    use_kd_tree = FALSE
   ) |>
   knn2nb(row.names = NULL)
 
 ### ------------------------------------------------------- Calculate rates ----
 sebsr_wfhz <- EBlocal(
-  ri = aggr_wfhz$cases,
-  ni = aggr_wfhz$pop,
+  ri = aggr_wfhz[[3]],
+  ni = aggr_wfhz[[4]],
   nb = sp_wts_wfhz
 )
 
@@ -107,33 +107,33 @@ wrangled_wfhz <- wrangled_wfhz |>
 ## ---- Split localities to address the issue of missing XY coordinates in some 
 
 ### ----------------------- Al Fasher and Tawila localities sampling points ----
-elf_taw_data <- wrangled_wfhz |> 
+elf_taw_data_wfhz <- wrangled_wfhz |> 
   filter(locality %in% c("El Fasher", "Tawila"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
-elf_taw_shp <- sudan_adm3 |> 
+elf_taw_shp_wfhz <- sudan_adm3 |> 
   filter(NAME_3 %in% c("El Fashir", "Tawilah"))
 
 ### ------------------------------------ El Lait and El Taweisha localities ----
-ellait_eltaw_data <- wrangled_wfhz |> 
+ellait_eltaw_data_wfhz <- wrangled_wfhz |> 
   filter(locality %in% c("El Lait", "El Taweisha"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
-ellait_eltaw_shp <- sudan_adm3 |> 
+ellait_eltaw_shp_wfhz <- sudan_adm3 |> 
   filter(NAME_3 == c("El Le Aeit En Nabi"))
 
 ## ---- Plot maps --------------------------------------------------------------
 
 ### ----------------------------------------------- El Lait and El Taweisha ----
 #### Map of raw rates ----
-ggplot(data = ellait_eltaw_shp) +
+ggplot(data = ellait_eltaw_shp_wfhz) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = ellait_eltaw_data,
+    data = ellait_eltaw_data_wfhz,
     aes(color = raw_cat)
   ) +
   scale_color_manual(
@@ -141,7 +141,7 @@ ggplot(data = ellait_eltaw_shp) +
     name = "Raw rates"
   ) +
     geom_sf_text(
-      data = ellait_eltaw_shp,
+      data = ellait_eltaw_shp_wfhz,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -157,14 +157,14 @@ ggplot(data = ellait_eltaw_shp) +
   )
 
 #### Map of SEBSR ----
-ggplot(data = ellait_eltaw_shp) +
+ggplot(data = ellait_eltaw_shp_wfhz) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = ellait_eltaw_data,
+    data = ellait_eltaw_data_wfhz,
     aes(color = sebsr_cat)
   ) +
   scale_color_manual(
@@ -172,7 +172,7 @@ ggplot(data = ellait_eltaw_shp) +
     name = "Smoothed rates"
   ) +
     geom_sf_text(
-      data = ellait_eltaw_shp,
+      data = ellait_eltaw_shp_wfhz,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -189,14 +189,14 @@ ggplot(data = ellait_eltaw_shp) +
 
 ### -------------------------------------------------- El Fasher and Tawila ----
 #### Map of raw rates ----
-ggplot(data = elf_taw_shp) +
+ggplot(data = elf_taw_shp_wfhz) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = elf_taw_data,
+    data = elf_taw_data_wfhz,
     aes(color = raw_cat)
   ) +
   scale_color_manual(
@@ -204,7 +204,7 @@ ggplot(data = elf_taw_shp) +
     name = "Raw rates"
   ) +
     geom_sf_text(
-      data = elf_taw_shp,
+      data = elf_taw_shp_wfhz,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -220,14 +220,14 @@ ggplot(data = elf_taw_shp) +
   )
 
 #### Map of SEBSR ----
-ggplot(data = elf_taw_shp) +
+ggplot(data = elf_taw_shp_wfhz) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
     size = 0.8
   ) +
   geom_sf(
-    data = elf_taw_data,
+    data = elf_taw_data_wfhz,
     aes(color = sebsr_cat)
   ) +
   scale_color_manual(
@@ -235,7 +235,7 @@ ggplot(data = elf_taw_shp) +
     name = "Smoothed rates"
   ) +
     geom_sf_text(
-      data = elf_taw_shp,
+      data = elf_taw_shp_wfhz,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
