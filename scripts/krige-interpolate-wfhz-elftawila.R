@@ -5,10 +5,10 @@
 ## ---- El Fasher and Tawila localities ----------------------------------------
 
 ### ------------------- Create a regular grid of area to be interpolated on ----
-elf_taw_grid <- elf_taw_shp |> 
+elf_taw_grid <- elf_taw_shp_wfhz |> 
   st_bbox() |> 
   st_as_stars(dx = 1200) |> 
-  st_crop(elf_taw_shp)
+  st_crop(elf_taw_shp_wfhz)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
 elf_taw_dist_max <- max(dist(st_coordinates(elf_taw_data_wfhz)))
@@ -111,7 +111,7 @@ ggplot() +
     values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
   ) +
   geom_sf(
-    data = st_cast(elf_taw_shp, "MULTILINESTRING"),
+    data = st_cast(elf_taw_shp_wfhz, "MULTILINESTRING"),
     linewidth = 0.2,
     color = "grey"
   ) +
