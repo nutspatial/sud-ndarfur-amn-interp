@@ -2,6 +2,11 @@
 #            WORKFLOW TO WRANGLE DATA THROUGH SPATIAL ATTRIBUTES               #
 ################################################################################
 
+## ---- Filter out North Darfur State and reproject ----------------------------
+sudan_adm3 <- sudan_adm3 |> 
+  filter(NAME_1 == "North Darfur") |> 
+  st_transform(crs = "EPSG:20135")
+
 ## ---- Set WFHZ data as an `sf` object  ---------------------------------------
 wfhz <- smart_wfhz |> 
 filter(!flag_wfhz == 1) |> 

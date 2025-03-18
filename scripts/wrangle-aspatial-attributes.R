@@ -3,13 +3,13 @@
 ################################################################################
 
 ## ---- Exclude rows with missing values ---------------------------------------
-data <- filter(
-  .data = data, 
+input_data <- filter(
+  .data = input_data, 
   !is.na(longitude)
 )
 
 ## ---- Wrangle weight-for-height data -----------------------------------------
-smart_wfhz <- data |> 
+smart_wfhz <- input_data |> 
   mutate(
     age = NA_real_,
     end = date(end),
@@ -38,7 +38,7 @@ smart_wfhz <- data |>
 
 
 ## ---- Wrangle MUAC data ------------------------------------------------------
-smart_muac <- data |> 
+smart_muac <- input_data |> 
   mutate(
     age = NA_real_,
     end = date(end),

@@ -1,7 +1,15 @@
 #'
 #'
-#'  Utility function to apply IPC Acute Malnutriton color codes based indicator
-#'
+#' Apply IPC Acute Malnutrition Phase colour codes based on either GAM prevalence 
+#' by WFHZ or by MUAC
+#' 
+#' @param .map_type Type of map that the function should apply the IPC colour 
+#' code on. A choice between static or interactive.
+#' 
+#' @param indicator If the prevalence is based on WFHZ or by MUAC.
+#' 
+#' @returns A map with polygons coloured based on the IPC Acute Malnutrition Phase
+#' colours. 
 #'
 #'
 

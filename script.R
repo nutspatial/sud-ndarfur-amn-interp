@@ -8,12 +8,17 @@ library(automap)
 library(stars)
 library(ggplot2)
 library(spdep)
+library(cyphr)
 
-## ---- Load utility functions -------------------------------------------------
-source("R/utils.R")
 
-## ---- Read in Sudan shapefile ------------------------------------------------
-source("scripts/read-in-shapefiles.R")
+## ---- Retrieve secret key for decryption -------------------------------------
+secret_key <- data_key(".", path_user = Sys.getenv("path_secret_key"))
+
+## ---- Load project-specific functions ----------------------------------------
+lapply(list.files(path = "R", full.names = TRUE), FUN = source)
+
+## ---- Read in nutrition data and Sudan shapefiles ----------------------------
+source("scripts/read-in-data.R")
 
 ## ---- Wrangle aspatial data --------------------------------------------------
 source("scripts/wrangle-aspatial-attributes.R")
@@ -25,4 +30,4 @@ source("scripts/data-quality-check.R")
 source("scripts/wrangle-spatial-attributes.R")
 
 ## ---- Run spatial interpolation ----------------------------------------------
-source("scripts/krige-interpolate-wfhz-automap.R")
+source("scripts/krige-interpolate-wfhz-elftawila.R")
