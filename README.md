@@ -38,14 +38,33 @@ Al Fasher, North Darfur, Sudan
 - `report/`
 - `scripts/`
 
+# Reproducibility information
+
+The repository was created in `R` version 4.4.2. This project uses the
+`{renv}` framework to record R package dependencies and versions.
+Packages and versions used are recorded in `renv.lock` and code used to
+manage dependencies is in `renv/` and other files in the root project
+directory. On starting an `R` session in the working directory, run
+`renv::restore()` to install R package dependencies.
+
+## Data encryption
+
+This project uses `{cyphr}` to encrypt the raw data that lives in
+`data-raw/` directory. In order to be able to access and decrypt the
+encrypted data, the user will need to have created their own personal
+SSH key and make a request to be added to the project. An easy-to-grasp
+guide on how to make a request will be found
+[here](https://github.com/OxfordIHTM/cyphr-encryption-demonstration#).
+
 # Licence
 
 This repository is licensed under a GNU General Public License 3
 (GPL-3).
 
-# Reproducibility information
+## Feedback
 
-To be updated…
+If you wish to give feedback, file an issue or seek support, kindly do
+so [here](https://github.com/nutspatial/sud-ndardfur-amn-interp/issues).
 
 # Author
 
