@@ -7,7 +7,7 @@
 ### ------------------- Create a regular grid of area to be interpolated on ----
 ellait_eltaw_grid <- ellait_eltaw_shp_wfhz |> 
   st_bbox() |> 
-  st_as_stars(dx = 1200) |> 
+  st_as_stars(dx = 500) |> 
   st_crop(ellait_eltaw_shp_wfhz)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
@@ -37,9 +37,20 @@ ellait_eltaw_krige_wfhz <- autoKrige(
   GLS.model = NA,
   start_vals = c(NA, NA, NA),
   miscFitOptions = list(),
-  nmin = 2,
-  nmax = 2
+  nmin = 3,
+  nmax = 6
 )
+
+### --------- Bin interpolated GAM prevalence into IPC AMN Phase categories ----
+ellait_eltaw_krige_wfhz$krige_output <- ellait_eltaw_krige_wfhz$krige_output |> 
+  mutate(
+    var1.pred.cat = cut(
+      x = var1.pred,
+      breaks = c(-Inf, 5.0, 9.9, 14.9, 29.9, Inf),
+      labels = c("<5.0%", "5.0-9.9%", "10.0-14.9%", "15.0-29.9%", "≥30.0%"),
+      include.lowest = TRUE
+    )
+  )
 
 ### -------------------------------- Cross-validation: leave-one-out method ----
 ellait_eltaw_cv_wfhz <- autoKrige.cv(
@@ -50,8 +61,8 @@ ellait_eltaw_cv_wfhz <- autoKrige.cv(
   GLS.model = NA,
   start_vals = c(NA, NA, NA),
   miscFitOptions = list(),
-  nmin = 2,
-  nmax = 2, 
+  nmin = 3,
+  nmax = 6, 
   verbose = c(FALSE, TRUE)
 )
 
@@ -99,16 +110,12 @@ theme(
 ggplot() +
   geom_stars(
     data = ellait_eltaw_krige_wfhz[[1]],
-    aes(fill = var1.pred, x = x, y = y)
+    aes(fill = var1.pred.cat, x = x, y = y)
   ) +
-  scale_fill_gradientn(
-    colors = apply_ipc_colours(),
-    na.value = "transparent",
-    name = "GAM Prevalence (%)",
-    limits = c(0, 30),
-    breaks = c(0, 5, 10, 15, 30),
-    labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
-    values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
+    scale_fill_manual(
+      values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
+      name = "", 
+      na.translate = FALSE
   ) +
   geom_sf(
     data = st_cast(ellait_eltaw_shp_wfhz, "MULTILINESTRING"),
@@ -116,89 +123,93 @@ ggplot() +
     color = "grey"
   ) +
   labs(
-    title = "A surface map of the predicted prevalence of GAM by WHZ"
+    title = "Surface map of the predicted prevalence of GAM by WFHZ"
   ) +
+  theme_void() +
   theme(
     plot.title = element_text(colour = "#706E6D", size = 10)
-  ) +
-  theme_void()
+  )
 
 ### ------------------------------------------------------- Get areal means ----
-# elf_taw_areal_mean_wfhz <- gstat::krige(
-#   formula = est ~ 1,
-#   locations = elf_taw_data_wfhz,
-#   nmin = 3,
-#   nmax = 4,
-#   model = elf_taw_variogram_wfhz[[2]],
-#   newdata = elf_taw_shp_wfhz
-# )
+ellait_eltaw_areal_mean_wfhz <- krige(
+  formula = est ~ 1,
+  locations = ellait_eltaw_data_wfhz,
+  nmin = 2,
+  nmax = 2,
+  model = ellait_eltaw_variogram_wfhz[[2]],
+  newdata = ellait_eltaw_shp_wfhz
+) |> 
+  mutate(
+    var1.pred.cat = cut(
+      x = var1.pred,
+      breaks = c(-Inf, 5.0, 9.9, 14.9, 29.9, Inf),
+      labels = c("<5.0%", "5.0-9.9%", "10.0-14.9%", "15.0-29.9%", "≥30.0%"),
+      include.lowest = TRUE
+    )
+  )
 
-# #### Cloropleth map of the mean predicted prevalence at locality level ----
-# ggplot() +
-#   geom_sf(
-#     data = elf_taw_areal_mean_wfhz,
-#     aes(fill = var1.pred),
-#     color = "black",
-#     size = 0.2
-#   ) +
-#   scale_fill_gradientn(
-#     colours = apply_ipc_colours(),
-#     na.value = "transparent",
-#     name = "GAM Prevalence (%)",
-#     limits = c(0, 30),
-#     breaks = c(0, 5, 10, 15, 30),
-#     labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
-#     values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
-#   ) +
-#   geom_sf(
-#     data = elf_taw_shp_wfhz,
-#     fill = NA,
-#     color = "#F2F3F4",
-#     size = 0.8
-#   ) +
-#   geom_sf_text(
-#     data = elf_taw_shp_wfhz,
-#     mapping = aes(label = factor(NAME_3)),
-#     show.legend = TRUE,
-#     color = "#34495E",
-#     size = 3,
-#   ) +
-#   labs(
-#     title = "Mean predicted prevalence of GAM by WFHZ at locality level",
-#     fill = "Predicted Values"
-#   ) +
-#   theme(
-#     plot.title = element_text(size = 9)
-#   ) +
-#   theme_void()
+#### Cloropleth map of the mean predicted prevalence at locality level ----
+ggplot() +
+  geom_sf(
+    data = ellait_eltaw_areal_mean_wfhz,
+    aes(fill = var1.pred.cat),
+    color = "black",
+    size = 0.2
+  ) +
+    scale_fill_manual(
+      values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
+      name = "", 
+      na.translate = FALSE
+  ) +
+  geom_sf(
+    data = ellait_eltaw_shp_wfhz,
+    fill = NA,
+    color = "#F2F3F4",
+    size = 0.8
+  ) +
+  geom_sf_text(
+    data = ellait_eltaw_shp_wfhz,
+    mapping = aes(label = factor(NAME_3)),
+    show.legend = FALSE,
+    color = "#34495E",
+    size = 3,
+  ) +
+  labs(
+    title = "Mean predicted prevalence of GAM by WFHZ at locality level",
+    fill = "Predicted Values"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(size = 9)
+  )
 
-# #### Get minimum and maximum predicted prevalence values by locality -----
-# elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>
-#   st_as_sf() |>
-#   st_join(elf_taw_shp_wfhz, left = FALSE) |> # each grid cell to a polygon
-#   group_by(NAME_3) |>
-#   summarise(
-#     min_value = min(var1.pred, na.rm = TRUE),
-#     max_value = max(var1.pred, na.rm = TRUE)
-#   )
+#### Get minimum and maximum predicted prevalence values by locality -----
+ellait_eltaw_interp_min_max_wfhz <- ellait_eltaw_krige_wfhz[[1]] |>
+  st_as_sf() |>
+  st_join(ellait_eltaw_shp_wfhz, left = FALSE) |> # each grid cell to a polygon
+  group_by(NAME_3) |>
+  summarise(
+    min_value = min(var1.pred, na.rm = TRUE),
+    max_value = max(var1.pred, na.rm = TRUE)
+  )
 
-# #### Compare mean predicted prevalence against original survey results -----
-# elf_taw_pred_vs_original_wfhz <- smart_wfhz |> 
-#   filter(locality %in% c("El Fasher", "Tawila")) |> 
-#   mw_estimate_prevalence_wfhz(
-#     wt = NULL,
-#     edema = edema,
-#     .by = locality
-#   ) |>
-#   select(locality, gam_p) |>
-#   arrange(factor(locality)) |>
-#   mutate(
-#     survey = gam_p * 100,
-#     interp = elf_taw_areal_mean_wfhz[["var1.pred"]],
-#     bias = interp - survey,
-#     min_interp = elf_taw_interp_min_max_wfhz[[2]],
-#     max_interp = elf_taw_interp_min_max_wfhz[[3]]
-#   ) |>
-#   select(-gam_p)
+#### Compare mean predicted prevalence against original survey results -----
+ellait_eltaw_pred_vs_original_wfhz <- smart_wfhz |> 
+  filter(locality %in% c("El Lait", "El Taweisha")) |> 
+  mw_estimate_prevalence_wfhz(
+    wt = NULL,
+    #edema = edema,
+    .by = locality
+  ) |>
+  select(locality, gam_p) |>
+  arrange(factor(locality)) |>
+  mutate(
+    survey = gam_p * 100,
+    interp = ellait_eltaw_areal_mean_wfhz[["var1.pred"]],
+    bias = interp - survey,
+    min_interp = ellait_eltaw_interp_min_max_wfhz[[2]],
+    max_interp = ellait_eltaw_interp_min_max_wfhz[[3]]
+  ) |>
+  select(-gam_p)
 
-# ############################## End of Workflow #################################
+# ############################## End of Workflow ###############################

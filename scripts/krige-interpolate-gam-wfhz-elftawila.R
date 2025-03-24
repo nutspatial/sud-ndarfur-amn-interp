@@ -7,7 +7,7 @@
 ### ------------------- Create a regular grid of area to be interpolated on ----
 elf_taw_grid <- elf_taw_shp_wfhz |> 
   st_bbox() |> 
-  st_as_stars(dx = 1200) |> 
+  st_as_stars(dx = 1000) |> 
   st_crop(elf_taw_shp_wfhz)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
@@ -40,6 +40,18 @@ elf_taw_krige_wfhz <- autoKrige(
   nmin = 3,
   nmax = 4
 )
+
+### --------- Bin interpolated GAM prevalence into IPC AMN Phase categories ----
+elf_taw_krige_wfhz$krige_output <- elf_taw_krige_wfhz$krige_output |> 
+  mutate(
+    var1.pred.cat = cut(
+      x = var1.pred,
+      breaks = c(-Inf, 5.0, 9.9, 14.9, 29.9, Inf),
+      labels = c("<5.0%", "5.0-9.9%", "10.0-14.9%", "15.0-29.9%", "≥30.0%"),
+      include.lowest = TRUE
+    )
+  )
+
 
 ### -------------------------------- Cross-validation: leave-one-out method ----
 elf_taw_cv_wfhz <- autoKrige.cv(
@@ -86,7 +98,8 @@ geom_smooth(
 ) +
 theme_minimal() +
 labs(
-  title = "A scatterplot of observed values against predicted",
+  title = "Scatterplot of observed values against predicted in the model cross-validation",
+  subtitle = paste("Perfect correlation between observed and predicted values: R\u00B2 =", round(elf_taw_cv_stats_wfhz$r2_obspred, 3)),
   x = "Predicted",
   y = "Observed"
 ) +
@@ -99,16 +112,12 @@ theme(
 ggplot() +
   geom_stars(
     data = elf_taw_krige_wfhz[[1]],
-    aes(fill = var1.pred, x = x, y = y)
+    aes(fill = var1.pred.cat, x = x, y = y)
   ) +
-  scale_fill_gradientn(
-    colors = apply_ipc_colours(),
-    na.value = "transparent",
-    name = "GAM Prevalence (%)",
-    limits = c(0, 30),
-    breaks = c(0, 5, 10, 15, 30),
-    labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
-    values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
+  scale_fill_manual(
+    values = apply_ipc_colours(),
+    name = "", 
+    na.translate = FALSE
   ) +
   geom_sf(
     data = st_cast(elf_taw_shp_wfhz, "MULTILINESTRING"),
@@ -116,39 +125,43 @@ ggplot() +
     color = "grey"
   ) +
   labs(
-    title = "A surface map of the predicted prevalence of GAM by WHZ"
+    title = "Surface map of the predicted prevalence of GAM by WFHZ"
   ) +
+  theme_void() +
   theme(
     plot.title = element_text(colour = "#706E6D", size = 10)
-  ) +
-  theme_void()
+  )
 
 ### ------------------------------------------------------- Get areal means ----
-elf_taw_areal_mean_wfhz <- gstat::krige(
+elf_taw_areal_mean_wfhz <- krige(
   formula = est ~ 1,
   locations = elf_taw_data_wfhz,
   nmin = 3,
   nmax = 4,
   model = elf_taw_variogram_wfhz[[2]],
   newdata = elf_taw_shp_wfhz
-)
+) |> 
+  mutate(
+    var1.pred.cat = cut(
+      x = var1.pred,
+      breaks = c(-Inf, 5.0, 9.9, 14.9, 29.9, Inf),
+      labels = c("<5.0%", "5.0-9.9%", "10.0-14.9%", "15.0-29.9%", "≥30.0%"),
+      include.lowest = TRUE
+    )
+  )
 
 #### Cloropleth map of the mean predicted prevalence at locality level ----
 ggplot() +
   geom_sf(
     data = elf_taw_areal_mean_wfhz,
-    aes(fill = var1.pred),
+    aes(fill = var1.pred.cat),
     color = "black",
     size = 0.2
   ) +
-  scale_fill_gradientn(
-    colours = apply_ipc_colours(),
-    na.value = "transparent",
-    name = "GAM Prevalence (%)",
-    limits = c(0, 30),
-    breaks = c(0, 5, 10, 15, 30),
-    labels = c("<5.0", "5.0-9.9", "10.0-14.9", "15.0-29.9", "≥30.0"),
-    values = scales::rescale(c(0, 5, 10, 15, 30), from = c(0, 30))
+  scale_fill_manual(
+    values = apply_ipc_colours(),
+    name = " ",
+    na.translate = FALSE
   ) +
   geom_sf(
     data = elf_taw_shp_wfhz,
@@ -159,18 +172,18 @@ ggplot() +
   geom_sf_text(
     data = elf_taw_shp_wfhz,
     mapping = aes(label = factor(NAME_3)),
-    show.legend = TRUE,
+    show.legend = FALSE,
     color = "#34495E",
     size = 3,
   ) +
+  theme_void() +
   labs(
     title = "Mean predicted prevalence of GAM by WFHZ at locality level",
     fill = "Predicted Values"
   ) +
   theme(
-    plot.title = element_text(size = 9)
-  ) +
-  theme_void()
+    plot.title = element_text(size = 9, colour = "#706E6D")
+  )
 
 #### Get minimum and maximum predicted prevalence values by locality -----
 elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>

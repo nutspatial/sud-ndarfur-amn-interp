@@ -6,6 +6,7 @@ library(mwana)
 library(sf)
 library(automap)
 library(stars)
+library(gstat)
 library(ggplot2)
 library(spdep)
 library(cyphr)
@@ -30,4 +31,6 @@ source("scripts/data-quality-check.R")
 source("scripts/wrangle-spatial-attributes.R")
 
 ## ---- Run spatial interpolation ----------------------------------------------
-source("scripts/krige-interpolate-wfhz-elftawila.R")
+source("scripts/krige-interpolate-gam-wfhz-elftawila.R")
+source("scripts/krige-interpolate-gam-wfhz-laittaw.R")
+
