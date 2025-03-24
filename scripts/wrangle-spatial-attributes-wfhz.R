@@ -50,7 +50,7 @@ ggplot(data = sudan_adm3) +
   ) +
   geom_sf(
     data = aggr_wfhz,
-    aes(color = "orange"),
+    color = "#05AD70",
     alpha = 0.3
   ) +
   geom_sf_text(
@@ -116,7 +116,7 @@ elf_taw_data_wfhz <- wrangled_wfhz |>
   filter(locality %in% c("El Fasher", "Tawila"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
-elf_taw_shp_wfhz <- sudan_adm3 |> 
+elf_taw_shp <- sudan_adm3 |> 
   filter(NAME_3 %in% c("El Fashir", "Tawilah"))
 
 ### ------------------------------------ El Lait and El Taweisha localities ----
@@ -124,14 +124,14 @@ ellait_eltaw_data_wfhz <- wrangled_wfhz |>
   filter(locality %in% c("El Lait", "El Taweisha"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
-ellait_eltaw_shp_wfhz <- sudan_adm3 |> 
+ellait_eltaw_shp <- sudan_adm3 |> 
   filter(NAME_3 == c("El Le Aeit En Nabi"))
 
 ## ---- Plot maps --------------------------------------------------------------
 
 ### ----------------------------------------------- El Lait and El Taweisha ----
 #### Map of raw rates ----
-ggplot(data = ellait_eltaw_shp_wfhz) +
+ggplot(data = ellait_eltaw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -146,7 +146,7 @@ ggplot(data = ellait_eltaw_shp_wfhz) +
     name = "Raw rates"
   ) +
     geom_sf_text(
-      data = ellait_eltaw_shp_wfhz,
+      data = ellait_eltaw_shp,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -162,7 +162,7 @@ ggplot(data = ellait_eltaw_shp_wfhz) +
   )
 
 #### Map of SEBSR ----
-ggplot(data = ellait_eltaw_shp_wfhz) +
+ggplot(data = ellait_eltaw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -177,7 +177,7 @@ ggplot(data = ellait_eltaw_shp_wfhz) +
     name = "Smoothed rates"
   ) +
     geom_sf_text(
-      data = ellait_eltaw_shp_wfhz,
+      data = ellait_eltaw_shp,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -194,7 +194,7 @@ ggplot(data = ellait_eltaw_shp_wfhz) +
 
 ### -------------------------------------------------- El Fasher and Tawila ----
 #### Map of raw rates ----
-ggplot(data = elf_taw_shp_wfhz) +
+ggplot(data = elf_taw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -209,7 +209,7 @@ ggplot(data = elf_taw_shp_wfhz) +
     name = "Raw rates"
   ) +
     geom_sf_text(
-      data = elf_taw_shp_wfhz,
+      data = elf_taw_shp,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8
@@ -225,7 +225,7 @@ ggplot(data = elf_taw_shp_wfhz) +
   )
 
 #### Map of SEBSR ----
-ggplot(data = elf_taw_shp_wfhz) +
+ggplot(data = elf_taw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -240,7 +240,7 @@ ggplot(data = elf_taw_shp_wfhz) +
     name = "Smoothed rates"
   ) +
     geom_sf_text(
-      data = elf_taw_shp_wfhz,
+      data = elf_taw_shp,
       mapping = aes(label = factor(NAME_3)),
       colour = "#34495E",
       size = 1.8

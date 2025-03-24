@@ -5,10 +5,10 @@
 ## ---- El Lait and El Tawisha localities --------------------------------------
 
 ### ------------------- Create a regular grid of area to be interpolated on ----
-ellait_eltaw_grid <- ellait_eltaw_shp_wfhz |> 
+ellait_eltaw_grid <- ellait_eltaw_shp |> 
   st_bbox() |> 
   st_as_stars(dx = 500) |> 
-  st_crop(ellait_eltaw_shp_wfhz)
+  st_crop(ellait_eltaw_shp)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
 ellait_eltaw_dist_max <- max(dist(st_coordinates(ellait_eltaw_data_wfhz)))
@@ -118,7 +118,7 @@ ggplot() +
       na.translate = FALSE
   ) +
   geom_sf(
-    data = st_cast(ellait_eltaw_shp_wfhz, "MULTILINESTRING"),
+    data = st_cast(ellait_eltaw_shp, "MULTILINESTRING"),
     linewidth = 0.2,
     color = "grey"
   ) +
@@ -137,7 +137,7 @@ ellait_eltaw_areal_mean_wfhz <- krige(
   nmin = 2,
   nmax = 2,
   model = ellait_eltaw_variogram_wfhz[[2]],
-  newdata = ellait_eltaw_shp_wfhz
+  newdata = ellait_eltaw_shp
 ) |> 
   mutate(
     var1.pred.cat = cut(
@@ -162,13 +162,13 @@ ggplot() +
       na.translate = FALSE
   ) +
   geom_sf(
-    data = ellait_eltaw_shp_wfhz,
+    data = ellait_eltaw_shp,
     fill = NA,
     color = "#F2F3F4",
     size = 0.8
   ) +
   geom_sf_text(
-    data = ellait_eltaw_shp_wfhz,
+    data = ellait_eltaw_shp,
     mapping = aes(label = factor(NAME_3)),
     show.legend = FALSE,
     color = "#34495E",
@@ -186,7 +186,7 @@ ggplot() +
 #### Get minimum and maximum predicted prevalence values by locality -----
 ellait_eltaw_interp_min_max_wfhz <- ellait_eltaw_krige_wfhz[[1]] |>
   st_as_sf() |>
-  st_join(ellait_eltaw_shp_wfhz, left = FALSE) |> # each grid cell to a polygon
+  st_join(ellait_eltaw_shp, left = FALSE) |> # each grid cell to a polygon
   group_by(NAME_3) |>
   summarise(
     min_value = min(var1.pred, na.rm = TRUE),
@@ -198,7 +198,7 @@ ellait_eltaw_pred_vs_original_wfhz <- smart_wfhz |>
   filter(locality %in% c("El Lait", "El Taweisha")) |> 
   mw_estimate_prevalence_wfhz(
     wt = NULL,
-    #edema = edema,
+    edema = edema,
     .by = locality
   ) |>
   select(locality, gam_p) |>

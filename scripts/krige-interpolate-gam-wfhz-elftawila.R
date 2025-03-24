@@ -5,10 +5,10 @@
 ## ---- El Fasher and Tawila localities ----------------------------------------
 
 ### ------------------- Create a regular grid of area to be interpolated on ----
-elf_taw_grid <- elf_taw_shp_wfhz |> 
+elf_taw_grid <- elf_taw_shp |> 
   st_bbox() |> 
-  st_as_stars(dx = 1000) |> 
-  st_crop(elf_taw_shp_wfhz)
+  st_as_stars(dx = 500) |> 
+  st_crop(elf_taw_shp)
 
 ### -------- Check the minimum and maximum distance between sampling points ----
 elf_taw_dist_max <- max(dist(st_coordinates(elf_taw_data_wfhz)))
@@ -120,7 +120,7 @@ ggplot() +
     na.translate = FALSE
   ) +
   geom_sf(
-    data = st_cast(elf_taw_shp_wfhz, "MULTILINESTRING"),
+    data = st_cast(elf_taw_shp, "MULTILINESTRING"),
     linewidth = 0.2,
     color = "grey"
   ) +
@@ -139,7 +139,7 @@ elf_taw_areal_mean_wfhz <- krige(
   nmin = 3,
   nmax = 4,
   model = elf_taw_variogram_wfhz[[2]],
-  newdata = elf_taw_shp_wfhz
+  newdata = elf_taw_shp
 ) |> 
   mutate(
     var1.pred.cat = cut(
@@ -164,13 +164,13 @@ ggplot() +
     na.translate = FALSE
   ) +
   geom_sf(
-    data = elf_taw_shp_wfhz,
+    data = elf_taw_shp,
     fill = NA,
     color = "#F2F3F4",
     size = 0.8
   ) +
   geom_sf_text(
-    data = elf_taw_shp_wfhz,
+    data = elf_taw_shp,
     mapping = aes(label = factor(NAME_3)),
     show.legend = FALSE,
     color = "#34495E",
@@ -188,7 +188,7 @@ ggplot() +
 #### Get minimum and maximum predicted prevalence values by locality -----
 elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>
   st_as_sf() |>
-  st_join(elf_taw_shp_wfhz, left = FALSE) |> # each grid cell to a polygon
+  st_join(elf_taw_shp, left = FALSE) |> # each grid cell to a polygon
   group_by(NAME_3) |>
   summarise(
     min_value = min(var1.pred, na.rm = TRUE),

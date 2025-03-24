@@ -22,15 +22,20 @@ lapply(list.files(path = "R", full.names = TRUE), FUN = source)
 source("scripts/read-in-data.R")
 
 ## ---- Wrangle aspatial data --------------------------------------------------
-source("scripts/wrangle-aspatial-attributes.R")
+source("scripts/wrangle-aspatial-attributes-wfhz.R")
+source("scripts/wrangle-aspatial-attributes-muac.R")
 
 ## ---- Run data plausibility checks -------------------------------------------
 source("scripts/data-quality-check.R")
 
 ## ---- Wrangle spatial data ---------------------------------------------------
-source("scripts/wrangle-spatial-attributes.R")
+source("scripts/wrangle-spatial-attributes-wfhz.R")
+source("scripts/wrangle-spatial-attributes-muac.R")
 
 ## ---- Run spatial interpolation ----------------------------------------------
 source("scripts/krige-interpolate-gam-wfhz-elftawila.R")
+source("scripts/krige-interpolate-gam-muac-elftawila.R")
 source("scripts/krige-interpolate-gam-wfhz-laittaw.R")
+source("scripts/krige-interpolate-gam-muac-laittaw.R")
+
 
