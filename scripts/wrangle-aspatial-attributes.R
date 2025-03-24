@@ -14,7 +14,7 @@ smart_wfhz <- input_data |>
     age = NA_real_,
     end = date(end),
     dob = coalesce(date(dob), estimated_dob = date(estimated_dob)),
-    edema = ifelse(edema == "No", "n", "y")
+    edema = case_when(edema == "No" ~ "n", edema == "Yes" ~ "y", .default = edema)
   ) |> 
   select(-estimated_dob) |> 
   mw_wrangle_age(
@@ -43,7 +43,7 @@ smart_muac <- input_data |>
     age = NA_real_,
     end = date(end),
     dob = coalesce(date(dob), estimated_dob = date(estimated_dob)),
-    edema = ifelse(edema == "No", "n", "y")
+    edema = case_when(edema == "No" ~ "n", edema == "Yes" ~ "y", .default = edema)
   ) |> 
   select(-estimated_dob) |> 
   mw_wrangle_age(
