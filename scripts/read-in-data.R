@@ -13,6 +13,7 @@ input_data <- decrypt(
 
 ## ---- Read Sudan shapefile in ------------------------------------------------
 sudan_adm3 <- st_read(
-  dsn = "data-raw/sdn_adm3.shp"
+  dsn = "data-raw/sdn_adm3.shp", 
+  quiet = TRUE
 )
 ################################ End of workflow ###############################

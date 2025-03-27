@@ -10,6 +10,7 @@ library(gstat)
 library(ggplot2)
 library(spdep)
 library(cyphr)
+library(janitor)
 
 
 ## ---- Retrieve secret key for decryption -------------------------------------
