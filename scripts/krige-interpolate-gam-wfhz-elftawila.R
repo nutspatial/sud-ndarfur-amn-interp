@@ -79,7 +79,7 @@ elf_taw_cv_stats_wfhz <- elf_taw_cv_wfhz[[1]] |>
   )
 
 #### Plot predicted ~ observed ----
-ggplot(
+elftaw_scatter_wfhz <- ggplot(
   data = elf_taw_cv_wfhz[[1]],
   aes(x = var1.pred, y = observed)
 ) +
@@ -98,18 +98,12 @@ geom_smooth(
 ) +
 theme_minimal() +
 labs(
-  title = "Scatterplot of observed values against predicted in the model cross-validation",
-  subtitle = paste("Perfect correlation between observed and predicted values: R\u00B2 =", round(elf_taw_cv_stats_wfhz$r2_obspred, 3)),
-  x = "Predicted",
-  y = "Observed"
-) +
-theme(
-  plot.title = element_text(size = 11),
-  plot.subtitle = element_text(size = 9, colour = "#706E6D")
+  x = "Predicted GAM rates (%)",
+  y = "Observed GAM rates (%)"
 )
 
 ### ----------------------- Visualize interpolated results on a map surface ----
-ggplot() +
+elftawila_surface_wfhz <- ggplot() +
   geom_stars(
     data = elf_taw_krige_wfhz[[1]],
     aes(fill = var1.pred.cat, x = x, y = y)
@@ -124,13 +118,7 @@ ggplot() +
     linewidth = 0.2,
     color = "grey"
   ) +
-  labs(
-    title = "Surface map of the predicted prevalence of GAM by WFHZ"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(colour = "#706E6D", size = 10)
-  )
+  theme_void()
 
 ### ------------------------------------------------------- Get areal means ----
 elf_taw_areal_mean_wfhz <- krige(
@@ -150,8 +138,8 @@ elf_taw_areal_mean_wfhz <- krige(
     )
   )
 
-#### Cloropleth map of the mean predicted prevalence at locality level ----
-ggplot() +
+#### Choropleth map of the mean predicted prevalence at locality level ----
+elftawila_choropleth_wfhz <- ggplot() +
   geom_sf(
     data = elf_taw_areal_mean_wfhz,
     aes(fill = var1.pred.cat),
@@ -176,14 +164,7 @@ ggplot() +
     color = "#34495E",
     size = 3,
   ) +
-  theme_void() +
-  labs(
-    title = "Mean predicted prevalence of GAM by WFHZ at locality level",
-    fill = "Predicted Values"
-  ) +
-  theme(
-    plot.title = element_text(size = 9, colour = "#706E6D")
-  )
+  theme_void()
 
 #### Get minimum and maximum predicted prevalence values by locality -----
 elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>
@@ -192,7 +173,8 @@ elf_taw_interp_min_max_wfhz <- elf_taw_krige_wfhz[[1]] |>
   group_by(NAME_3) |>
   summarise(
     min_value = min(var1.pred, na.rm = TRUE),
-    max_value = max(var1.pred, na.rm = TRUE)
+    max_value = max(var1.pred, na.rm = TRUE),
+    median_value = median(var1.pred, na.rm = TRUE)
   )
 
 #### Compare mean predicted prevalence against original survey results -----
@@ -210,7 +192,8 @@ elf_taw_pred_vs_original_wfhz <- smart_wfhz |>
     interp = elf_taw_areal_mean_wfhz[["var1.pred"]],
     bias = interp - survey,
     min_interp = elf_taw_interp_min_max_wfhz[[2]],
-    max_interp = elf_taw_interp_min_max_wfhz[[3]]
+    max_interp = elf_taw_interp_min_max_wfhz[[3]], 
+    median_interp = elf_taw_interp_min_max_wfhz[[4]]
   ) |>
   select(-gam_p)
 

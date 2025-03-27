@@ -37,7 +37,7 @@ aggr_muac <- muac |>
   st_transform(crs = "EPSG:20135")
 
 ## ---- Check the spatial distribution of the sampling points ------------------
-ggplot(data = sudan_adm3) +
+north_darfur_spoints <- ggplot(data = sudan_adm3) +
   geom_sf(
     fill = "white",
     color = "#3F4342",

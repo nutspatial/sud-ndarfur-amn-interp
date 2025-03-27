@@ -8,3 +8,4 @@
 
 ## ---- Git ignore dataset -----------------------------------------------------
 data-raw/el-fasher-smart-survey-data.xlsx
+/.quarto/
