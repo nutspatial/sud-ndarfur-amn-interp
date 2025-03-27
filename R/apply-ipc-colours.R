@@ -1,7 +1,15 @@
 #'
 #'
-#'  Utility function to apply IPC Acute Malnutriton color codes based indicator
-#'
+#' Apply IPC Acute Malnutrition Phase colour codes based on either GAM prevalence 
+#' by WFHZ or by MUAC
+#' 
+#' @param .map_type Type of map that the function should apply the IPC colour 
+#' code on. A choice between static or interactive.
+#' 
+#' @param indicator If the prevalence is based on WFHZ or by MUAC.
+#' 
+#' @returns A map with polygons coloured based on the IPC Acute Malnutrition Phase
+#' colours. 
 #'
 #'
 
@@ -29,10 +37,10 @@ if (.map_type == "static") {
     # Color codes for GAM by MUAC-based thresholds ----
     "muac" = {
       x <- c(
-        "<0.05" = "#CDFACD",
-        "0.05-0.09" = "#FAE61E",
-        "0.10-0.149" = "#E67800",
-        "≥0.15" = "#640000"
+        "<5.0%" = "#CDFACD",
+        "5.0-9.0%" = "#FAE61E",
+        "10.0-14.9%" = "#E67800",
+        "≥15.0%" = "#640000"
       )
       x
     }

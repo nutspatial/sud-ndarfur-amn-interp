@@ -2,6 +2,11 @@
 #            WORKFLOW TO WRANGLE DATA THROUGH SPATIAL ATTRIBUTES               #
 ################################################################################
 
+## ---- Filter out North Darfur State and reproject ----------------------------
+sudan_adm3 <- sudan_adm3 |> 
+  filter(NAME_1 == "North Darfur") |> 
+  st_transform(crs = "EPSG:20135")
+
 ## ---- Set WFHZ data as an `sf` object  ---------------------------------------
 wfhz <- smart_wfhz |> 
 filter(!flag_wfhz == 1) |> 
@@ -45,7 +50,7 @@ ggplot(data = sudan_adm3) +
   ) +
   geom_sf(
     data = aggr_wfhz,
-    aes(color = "orange"),
+    color = "#05AD70",
     alpha = 0.3
   ) +
   geom_sf_text(
@@ -68,15 +73,15 @@ ggplot(data = sudan_adm3) +
 sp_wts_wfhz <- aggr_wfhz |>
   knearneigh(
     k = 4,
-    longlat = TRUE,
-    use_kd_tree = TRUE
+    longlat = NULL,
+    use_kd_tree = FALSE
   ) |>
   knn2nb(row.names = NULL)
 
 ### ------------------------------------------------------- Calculate rates ----
 sebsr_wfhz <- EBlocal(
-  ri = aggr_wfhz$cases,
-  ni = aggr_wfhz$pop,
+  ri = aggr_wfhz[[3]],
+  ni = aggr_wfhz[[4]],
   nb = sp_wts_wfhz
 )
 
@@ -107,7 +112,7 @@ wrangled_wfhz <- wrangled_wfhz |>
 ## ---- Split localities to address the issue of missing XY coordinates in some 
 
 ### ----------------------- Al Fasher and Tawila localities sampling points ----
-elf_taw_data <- wrangled_wfhz |> 
+elf_taw_data_wfhz <- wrangled_wfhz |> 
   filter(locality %in% c("El Fasher", "Tawila"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
@@ -115,7 +120,7 @@ elf_taw_shp <- sudan_adm3 |>
   filter(NAME_3 %in% c("El Fashir", "Tawilah"))
 
 ### ------------------------------------ El Lait and El Taweisha localities ----
-ellait_eltaw_data <- wrangled_wfhz |> 
+ellait_eltaw_data_wfhz <- wrangled_wfhz |> 
   filter(locality %in% c("El Lait", "El Taweisha"))
 
 ### ---------------------------- Al Fasher and Tawila localities shapefiles ----
@@ -133,7 +138,7 @@ ggplot(data = ellait_eltaw_shp) +
     size = 0.8
   ) +
   geom_sf(
-    data = ellait_eltaw_data,
+    data = ellait_eltaw_data_wfhz,
     aes(color = raw_cat)
   ) +
   scale_color_manual(
@@ -164,7 +169,7 @@ ggplot(data = ellait_eltaw_shp) +
     size = 0.8
   ) +
   geom_sf(
-    data = ellait_eltaw_data,
+    data = ellait_eltaw_data_wfhz,
     aes(color = sebsr_cat)
   ) +
   scale_color_manual(
@@ -196,7 +201,7 @@ ggplot(data = elf_taw_shp) +
     size = 0.8
   ) +
   geom_sf(
-    data = elf_taw_data,
+    data = elf_taw_data_wfhz,
     aes(color = raw_cat)
   ) +
   scale_color_manual(
@@ -227,7 +232,7 @@ ggplot(data = elf_taw_shp) +
     size = 0.8
   ) +
   geom_sf(
-    data = elf_taw_data,
+    data = elf_taw_data_wfhz,
     aes(color = sebsr_cat)
   ) +
   scale_color_manual(
