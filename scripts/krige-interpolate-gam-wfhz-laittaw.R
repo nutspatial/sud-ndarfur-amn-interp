@@ -78,7 +78,7 @@ ellait_eltaw_cv_stats_wfhz <- ellait_eltaw_cv_wfhz[[1]] |>
   )
 
 #### Plot predicted ~ observed ----
-ggplot(
+laittaw_scatter_wfhz <- ggplot(
   data = ellait_eltaw_cv_wfhz[[1]],
   aes(x = var1.pred, y = observed)
 ) +
@@ -97,17 +97,12 @@ geom_smooth(
 ) +
 theme_minimal() +
 labs(
-  title = "A scatterplot of observed values against predicted",
-  x = "Predicted",
-  y = "Observed"
-) +
-theme(
-  plot.title = element_text(size = 11),
-  plot.subtitle = element_text(size = 9, colour = "#706E6D")
+  x = "Predicted GAM rates (%)",
+  y = "Observed GAM rates (%)"
 )
 
 ### ----------------------- Visualize interpolated results on a map surface ----
-ggplot() +
+laittaw_surface_wfhz <- ggplot() +
   geom_stars(
     data = ellait_eltaw_krige_wfhz[[1]],
     aes(fill = var1.pred.cat, x = x, y = y)
@@ -122,13 +117,7 @@ ggplot() +
     linewidth = 0.2,
     color = "grey"
   ) +
-  labs(
-    title = "Surface map of the predicted prevalence of GAM by WFHZ"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(colour = "#706E6D", size = 10)
-  )
+  theme_void()
 
 ### ------------------------------------------------------- Get areal means ----
 ellait_eltaw_areal_mean_wfhz <- krige(
@@ -148,8 +137,8 @@ ellait_eltaw_areal_mean_wfhz <- krige(
     )
   )
 
-#### Cloropleth map of the mean predicted prevalence at locality level ----
-ggplot() +
+#### Choropleth map of the mean predicted prevalence at locality level ----
+laittaw_choropleth_wfhz <- ggplot() +
   geom_sf(
     data = ellait_eltaw_areal_mean_wfhz,
     aes(fill = var1.pred.cat),
@@ -174,14 +163,7 @@ ggplot() +
     color = "#34495E",
     size = 3,
   ) +
-  labs(
-    title = "Mean predicted prevalence of GAM by WFHZ at locality level",
-    fill = "Predicted Values"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(size = 9)
-  )
+  theme_void()
 
 #### Get minimum and maximum predicted prevalence values by locality -----
 ellait_eltaw_interp_min_max_wfhz <- ellait_eltaw_krige_wfhz[[1]] |>
@@ -190,7 +172,8 @@ ellait_eltaw_interp_min_max_wfhz <- ellait_eltaw_krige_wfhz[[1]] |>
   group_by(NAME_3) |>
   summarise(
     min_value = min(var1.pred, na.rm = TRUE),
-    max_value = max(var1.pred, na.rm = TRUE)
+    max_value = max(var1.pred, na.rm = TRUE), 
+    median_value = median(var1.pred, na.rm = TRUE)
   )
 
 #### Compare mean predicted prevalence against original survey results -----
@@ -208,7 +191,8 @@ ellait_eltaw_pred_vs_original_wfhz <- smart_wfhz |>
     interp = ellait_eltaw_areal_mean_wfhz[["var1.pred"]],
     bias = interp - survey,
     min_interp = ellait_eltaw_interp_min_max_wfhz[[2]],
-    max_interp = ellait_eltaw_interp_min_max_wfhz[[3]]
+    max_interp = ellait_eltaw_interp_min_max_wfhz[[3]], 
+    median_interp = ellait_eltaw_interp_min_max_wfhz[[4]]
   ) |>
   select(-gam_p)
 

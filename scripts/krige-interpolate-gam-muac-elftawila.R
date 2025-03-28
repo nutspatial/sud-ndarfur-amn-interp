@@ -72,7 +72,7 @@ elf_taw_krige_cv_stats_muac <- elf_taw_cv_muac[[1]] |>
   )
 
 #### Plot predicted ~ observed ----
-ggplot(
+elftaw_scatter_muac <- ggplot(
   data = elf_taw_cv_muac[[1]],
   aes(x = var1.pred, y = observed)
 ) +
@@ -91,17 +91,12 @@ geom_smooth(
 ) +
 theme_minimal() +
 labs(
-  title = "A scatterplot of observed values against predicted",
-  x = "Predicted",
-  y = "Observed"
-) +
-theme(
-  plot.title = element_text(size = 11),
-  plot.subtitle = element_text(size = 9, colour = "#706E6D")
+  x = "Predicted GAM rates (%)",
+  y = "Observed GAM rates (%)"
 )
 
 ### ----------------------- Visualize interpolated results on a map surface ----
-ggplot() +
+elftawila_surface_muac <- ggplot() +
   geom_stars(
     data = elf_taw_krige_muac[[1]],
     aes(fill = var1.pred.cat, x = x, y = y)
@@ -116,13 +111,7 @@ ggplot() +
     linewidth = 0.2,
     color = "grey"
   ) +
-  labs(
-    title = "Surface map of the predicted prevalence of GAM by MUAC"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(colour = "#706E6D", size = 10)
-  )
+  theme_void()
 
 ### ------------------------------------------------------- Get areal means ----
 elf_taw_areal_mean_muac <- krige(
@@ -143,7 +132,7 @@ elf_taw_areal_mean_muac <- krige(
   )
 
 #### Cloropleth map of the mean predicted prevalence at locality level ----
-ggplot() +
+elftawila_choropleth_muac <- ggplot() +
   geom_sf(
     data = elf_taw_areal_mean_muac,
     aes(fill = var1.pred.cat),
@@ -168,14 +157,7 @@ ggplot() +
     color = "#34495E",
     size = 3,
   ) +
-  labs(
-    title = "Mean predicted prevalence of GAM by MUAC at locality level",
-    fill = "Predicted Values"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(size = 9)
-  )
+  theme_void()
 
 #### Get minimum and maximum predicted prevalence values by locality -----
 elf_taw_interp_min_max_muac <- elf_taw_krige_muac[[1]] |>
@@ -184,7 +166,8 @@ elf_taw_interp_min_max_muac <- elf_taw_krige_muac[[1]] |>
   group_by(NAME_3) |>
   summarise(
     min_value = min(var1.pred, na.rm = TRUE),
-    max_value = max(var1.pred, na.rm = TRUE)
+    max_value = max(var1.pred, na.rm = TRUE), 
+    median_value = median(var1.pred, na.rm = TRUE)
   )
 
 #### Compare mean predicted prevalence against original survey results -----
@@ -202,7 +185,8 @@ elf_taw_pred_vs_original_muac <- smart_muac |>
     interp = elf_taw_areal_mean_muac[["var1.pred"]],
     bias = interp - survey,
     min_interp = elf_taw_interp_min_max_muac[[2]],
-    max_interp = elf_taw_interp_min_max_muac[[3]]
+    max_interp = elf_taw_interp_min_max_muac[[3]], 
+    median_interp = elf_taw_interp_min_max_muac[[4]]
   ) |>
   select(-gam_p)
 

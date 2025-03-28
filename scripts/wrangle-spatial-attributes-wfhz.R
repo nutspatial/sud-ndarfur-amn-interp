@@ -151,18 +151,10 @@ ggplot(data = ellait_eltaw_shp) +
       colour = "#34495E",
       size = 1.8
     ) +
-  theme_void() +
-  labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across El Lait and El Tawish",
-    subtitle = "Raw rates: cases / total number of children surveyed"
-  ) +
-  theme(
-    plot.title = element_text(size = 11),
-    plot.subtitle = element_text(size = 9, colour = "#706E6D")
-  )
+  theme_void()
 
 #### Map of SEBSR ----
-ggplot(data = ellait_eltaw_shp) +
+laittaw_spoints <- ggplot(data = ellait_eltaw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -182,15 +174,7 @@ ggplot(data = ellait_eltaw_shp) +
       colour = "#34495E",
       size = 1.8
     ) +
-  theme_void() +
-  labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across across El Lait and El Tawish",
-    subtitle = "Rates smoothed using Spatial Empirical Bayesian"
-  ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_text(size = 9, colour = "#706E6D")
-  )
+  theme_void()
 
 ### -------------------------------------------------- El Fasher and Tawila ----
 #### Map of raw rates ----
@@ -206,7 +190,7 @@ ggplot(data = elf_taw_shp) +
   ) +
   scale_color_manual(
     values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
-    name = "Raw rates"
+    name = "Raw GAM rates"
   ) +
     geom_sf_text(
       data = elf_taw_shp,
@@ -214,18 +198,10 @@ ggplot(data = elf_taw_shp) +
       colour = "#34495E",
       size = 1.8
     ) +
-  theme_void() +
-  labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across El Fashir and Tawila",
-    subtitle = "Raw rates: cases / total number of children surveyed"
-  ) +
-  theme(
-    plot.title = element_text(size = 11),
-    plot.subtitle = element_text(size = 9, colour = "#706E6D")
-  )
+  theme_void()
 
 #### Map of SEBSR ----
-ggplot(data = elf_taw_shp) +
+elftawila_spoints <- ggplot(data = elf_taw_shp) +
   geom_sf(
     fill = "white",
     color = "#3F4342",
@@ -237,7 +213,7 @@ ggplot(data = elf_taw_shp) +
   ) +
   scale_color_manual(
     values = apply_ipc_colours(indicator = "wfhz", .map_type = "static"),
-    name = "Smoothed rates"
+    name = "GAM rates"
   ) +
     geom_sf_text(
       data = elf_taw_shp,
@@ -245,13 +221,5 @@ ggplot(data = elf_taw_shp) +
       colour = "#34495E",
       size = 1.8
     ) +
-  theme_void() +
-  labs(
-    title = "Spatial distribution GAM by WFHZ rates by sampling points across across El Fashir and Tawila",
-    subtitle = "Rates smoothed using Spatial Empirical Bayesian"
-  ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_text(size = 9, colour = "#706E6D")
-  )
+  theme_void()
 ################################ End of workflow ###############################

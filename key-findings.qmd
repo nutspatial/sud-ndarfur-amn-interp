@@ -1,0 +1,303 @@
+---
+title: North Darfur, Sudan
+subtitle: Results from surveys conducted at lower adminstrative level
+author: Tomás Zaba
+date: today
+format: revealjs
+---
+
+```{r}
+#| label: set-up
+#| include: false
+Sys.setenv(path_secret_key = "~/.ssh/id_rsa")
+library(kableExtra)
+source("script.R")
+```
+
+## {.smaller}
+:::: {.columns}
+::: {.column width="70%"}
+```{r}
+#| label: north-darfur-sampling-points
+north_darfur_spoints
+```
+:::
+
+::: {.column width="30%"}
+
++ Um Kaddada had 97.5% of data missing GPS coordinates --> **Excluded from the analysis**
++ El Lait had 46% of the data missing GPS coordinates
+
+:::
+::::
+
+# Results
+El Fasher & Tawila
+
+##
+### Spatial Variation of GAM by WFHZ
+```{r}
+#| label: interp-surface-maps-wfhz-elftaw
+#| layout-ncol: 3
+#| layout-nrow: 1
+#| fig-height: 10
+#| fig-width: 8
+#| fig-align: "center"
+#| fig-dpi: 100
+#| fig-subcap: 
+#|   - "Survey sampling points"
+#|   - "Predicted surface map"
+#|   - "Choropleth map: Locality"
+
+elftawila_spoints
+elftawila_surface_wfhz
+elftawila_choropleth_wfhz
+```
+
+## {.smaller}
+### Predicted Estimates of GAM by WFHZ
+
+```{r}
+#| label: predicted-estimates-wfhz-elftaw
+elf_taw_pred_vs_original_wfhz |> 
+  mutate(across(.cols = 2:7, \(.) round(., 2))) |> 
+  rename(
+    `Observed prevalence (%)` = survey,
+    `Predicted prevalence (%)` = interp,
+    `Minimum prevalence (%)` = min_interp,
+    `Maximum prevalence (%)` = max_interp,
+    `Median prevalence (%)` = median_interp
+  ) |> 
+    kable(
+      format = "html",
+      align = "c", 
+      caption = "Observed Locality prevalence estimates vs predicted prevalence"
+    )
+```
+
+## {.smaller}
+### Did the Model Fit the Data?
+
+:::: {.columns}
+
+::: {.column width="80%"}
+
+```{r}
+#| label: cross-validation-wfhz-elftaw
+#| fig-height: 5.9
+#| fig-align: left
+elftaw_scatter_wfhz
+```
+:::
+
+::: {.column width="20%"}
+
+<br>
+
+`r paste("R² =", round(elf_taw_cv_stats_wfhz$r2_obspred, 3))`
+
++ Almost perfect positive correlation
+
+:::
+::::
+
+##
+### Spatial Variation of GAM by MUAC
+```{r}
+#| label: interp-surface-maps-muac-elftaw
+#| layout-ncol: 3
+#| layout-nrow: 1
+#| fig-width: 8
+#| fig-height: 10
+#| fig-align: "center"
+#| fig-dpi: 100
+#| fig-subcap: 
+#|   - "Survey sampling points"
+#|   - "Predicted surface map"
+#|   - "Choropleth map: Locality"
+
+elftawila_spoints
+elftawila_surface_muac
+elftawila_choropleth_muac
+```
+
+## {.smaller}
+### Predicted Estimates of GAM by MUAC
+
+```{r}
+#| label: predicted-estimates-muac-elftaw
+elf_taw_pred_vs_original_muac |> 
+  mutate(across(.cols = 2:7, \(.) round(., 2))) |> 
+  rename(
+    `Observed prevalence (%)` = survey,
+    `Predicted prevalence (%)` = interp,
+    `Minimum prevalence (%)` = min_interp,
+    `Maximum prevalence (%)` = max_interp,
+    `Median prevalence (%)` = median_interp
+  ) |> 
+    kable(
+      format = "html",
+      align = "c", 
+      caption = "Observed Locality prevalence estimates vs predicted prevalence"
+    )
+```
+
+## {.smaller}
+### Did the Model fit the Data?
+
+:::: {.columns}
+
+::: {.column width="80%"}
+
+```{r}
+#| label: cross-validation-muac-elftaw
+#| fig-height: 5.6
+#| fig-align: left
+elftaw_scatter_muac
+```
+:::
+
+::: {.column width="20%"}
+`r paste("R² =", round(elf_taw_krige_cv_stats_muac$r2_obspred, 3))`
+
++ Almost perfect positive correlation
+:::
+::::
+
+# Results
+Al Lait & At Tawisha
+
+##
+### Spatial Variation of GAM by WFHZ
+```{r}
+#| label: interp-surface-maps-wfhz-laittaw
+#| layout-ncol: 3
+#| layout-nrow: 1
+#| fig-width: 8
+#| fig-height: 10
+#| fig-align: "center"
+#| fig-dpi: 100
+#| fig-subcap: 
+#|   - "Survey sampling points"
+#|   - "Predicted surface map"
+#|   - "Choropleth map: Locality"
+
+laittaw_spoints
+laittaw_surface_wfhz
+laittaw_choropleth_wfhz
+```
+
+## {.smaller}
+### Predicted Estimates of GAM by WFHZ
+
+<br> 
+
+```{r}
+#| label: predicted-estimates-wfhz-laittaw
+ellait_eltaw_pred_vs_original_wfhz |> 
+  mutate(across(.cols = 2:7, \(.) round(., 2))) |> 
+  rename(
+    `Observed prevalence (%)` = survey,
+    `Predicted prevalence (%)` = interp,
+    `Minimum prevalence (%)` = min_interp,
+    `Maximum prevalence (%)` = max_interp,
+    `Median prevalence (%)` = median_interp
+  ) |> 
+    kable(
+      format = "html",
+      align = "c", 
+      caption = " ⚠️  Values in columns 3, 5-7 need to be revised when I get a Shapefile that splits El Lait and El Taweisha localities into two"
+    )
+```
+
+## {.smaller}
+### Did the Model Fit the Data?
+
+:::: {.columns}
+
+::: {.column width="80%"}
+
+```{r}
+#| label: cross-validation-wfhz-laittaw
+#| fig-height: 5.9
+#| fig-align: left
+laittaw_scatter_wfhz
+```
+:::
+
+::: {.column width="20%"}
+
+<br>
+
+`r paste("R² =", round(ellait_eltaw_cv_stats_wfhz$r2_obspred, 3))`
+
++ Positive and strong correlation
+
+:::
+::::
+
+##
+### Spatial Variation of GAM by MUAC
+```{r}
+#| label: interp-surface-maps-muac-laittaw
+#| layout-ncol: 3
+#| layout-nrow: 1
+#| fig-width: 8
+#| fig-height: 10
+#| fig-align: "center"
+#| fig-dpi: 100
+#| fig-subcap: 
+#|   - "Survey sampling points"
+#|   - "Predicted surface map"
+#|   - "Choropleth map: Locality"
+
+laittaw_spoints
+laittaw_surface_muac
+laittaw_choropleth_muac
+```
+
+## {.smaller}
+### Predicted Estimates of GAM by MUAC
+
+<br> 
+
+```{r}
+#| label: predicted-estimates-muac-laittaw
+ellait_eltaw_pred_vs_original_muac |> 
+  mutate(across(.cols = 2:7, \(.) round(., 2))) |> 
+  rename(
+    `Observed prevalence (%)` = survey,
+    `Predicted prevalence (%)` = interp,
+    `Minimum prevalence (%)` = min_interp,
+    `Maximum prevalence (%)` = max_interp,
+    `Median prevalence (%)` = median_interp
+  ) |> 
+    kable(
+      format = "html",
+      align = "c", 
+      caption = " ⚠️  Values in columns 3, 5-7 need to be revised when I get a Shapefile that splits El Lait and El Taweisha localities into two"
+    )
+```
+
+## {.smaller}
+### Did the Model fit the Data?
+
+:::: {.columns}
+
+::: {.column width="80%"}
+
+```{r}
+#| label: cross-validation-muac-laittaw
+#| fig-height: 5.6
+#| fig-align: left
+laittaw_scatter_muac
+```
+:::
+
+::: {.column width="20%"}
+`r paste("R² =", round(ellait_eltaw_cv_stats_muac$r2_obspred, 3))`
+
++ Positive and strong correlation
+:::
+::::
+

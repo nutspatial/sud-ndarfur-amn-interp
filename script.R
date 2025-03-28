@@ -11,6 +11,7 @@ library(ggplot2)
 library(spdep)
 library(cyphr)
 library(janitor)
+library(kableExtra)
 
 
 ## ---- Retrieve secret key for decryption -------------------------------------
