@@ -190,6 +190,8 @@ laittaw_choropleth_wfhz
 ## {.smaller}
 ### Predicted Estimates of GAM by WFHZ
 
+<br> 
+
 ```{r}
 #| label: predicted-estimates-wfhz-laittaw
 ellait_eltaw_pred_vs_original_wfhz |> 
@@ -204,7 +206,7 @@ ellait_eltaw_pred_vs_original_wfhz |>
     kable(
       format = "html",
       align = "c", 
-      caption = "Observed Locality prevalence estimates vs predicted prevalence"
+      caption = " ⚠️  Values in columns 3, 5-7 need to be revised when I get a Shapefile that splits El Lait and El Taweisha localities into two"
     )
 ```
 
@@ -257,6 +259,8 @@ laittaw_choropleth_muac
 ## {.smaller}
 ### Predicted Estimates of GAM by MUAC
 
+<br> 
+
 ```{r}
 #| label: predicted-estimates-muac-laittaw
 ellait_eltaw_pred_vs_original_muac |> 
@@ -271,7 +275,7 @@ ellait_eltaw_pred_vs_original_muac |>
     kable(
       format = "html",
       align = "c", 
-      caption = "Observed Locality prevalence estimates vs predicted prevalence"
+      caption = " ⚠️  Values in columns 3, 5-7 need to be revised when I get a Shapefile that splits El Lait and El Taweisha localities into two"
     )
 ```
 
