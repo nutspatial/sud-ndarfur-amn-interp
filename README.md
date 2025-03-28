@@ -1,47 +1,45 @@
 
 
-# Enhancing the ability to tell where acute malnutrition is of concern: a spatial interpolation using PPS-based survey data
+# Spatial interpolation of acute malnutrition: a quest using probability proportional to the size of the population-based survey data
 
-Acute malnutrition is a life-threatening and devastating disease of
-epidemic proportions worldwide, particularly in low- and middle-income
-countries, affecting mostly children under the age of five.
+To effectively combat this public health issue, enhancing the ability to
+tell *where* acute malnutrition is of great concern over other areas is
+paramount. Possessing this information leverages the ability of
+programmers to prioritize limited resources - that are now getting even
+more shrunk amid the modern resource-constraint era.
 
-To effectively fight this public health issue, acute malnutrition
-programs require approaches that use the limited resources to put in
-place targeted interventions that meet efficiently- and effectively the
-population’s needs. One approach to that end involves knowing and
-understanding the spatial or geographic variation of acute malnutrition.
+This repository is an R implementation of a quest applying spatial
+interpolation modelling techniques. The quest aims to explore the
+usability of probability proportional to the size of the
+population-based survey sampling data to predict the prevalence of acute
+malnutrition from the observed sampling points to unobserved locations
+across a given survey area of interest.
 
-This repository contains an R implementation of a spatial data analysis
-that is aimed at identifying locations in the area of analysis where
-acute malnutrition is of concern by predicting it from sampled areas to
-unsampled ones.
-
-## Research questions:
+## Research (quest) question:
 
 - Does spatial interpolation produce reliable (precise and accurate)
-  estimates using small scale survey data, such as district level
-  surveys?
+  estimates when applied to a small-scale PPS-based survey?
 
 If yes:
 
-- How comparable the predicted estimates can be against the observed
-  prevalence estimates of the original survey results?
+- a
 
 ## Study area
 
-Al Fasher, North Darfur, Sudan
+North Darfur, Sudan
 
-# Repository structure
+## Repository Structure
 
-- `data/`
-- `report/`
-- `scripts/`
+- `raw-data/`: a data frame of the input data. This is encrypted.
+- `R/`: some handy user-defined functions.
+- `scripts/`: a set of `R` scripts. These are split into different
+  files, based on the specific task that they execute. Run `script.R`
+  file to implement the project workflow.
 
-# Reproducibility information
+## Reproducibility information
 
 The repository was created in `R` version 4.4.2. This project uses the
-`{renv}` framework to record R package dependencies and versions.
+`{renv}` framework to record `R` package dependencies and versions.
 Packages and versions used are recorded in `renv.lock` and code used to
 manage dependencies is in `renv/` and other files in the root project
 directory. On starting an `R` session in the working directory, run
@@ -54,9 +52,9 @@ This project uses `{cyphr}` to encrypt the raw data that lives in
 encrypted data, the user will need to have created their own personal
 SSH key and make a request to be added to the project. An easy-to-grasp
 guide on how to make a request will be found
-[here](https://github.com/OxfordIHTM/cyphr-encryption-demonstration#).
+[here](https://github.com/OxfordIHTM/cyphr-encryption-demonstration#)
 
-# Licence
+## License
 
 This repository is licensed under a GNU General Public License 3
 (GPL-3).
@@ -64,8 +62,8 @@ This repository is licensed under a GNU General Public License 3
 ## Feedback
 
 If you wish to give feedback, file an issue or seek support, kindly do
-so [here](https://github.com/nutspatial/sud-ndardfur-amn-interp/issues).
+so [here](https://github.com/nutspatial/ugd-karamoja-amn-interp/issues).
 
-# Author
+## Author
 
 Tomás Zaba
